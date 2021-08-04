@@ -1,0 +1,19 @@
+<script>
+	function onAuthStateChanged(fn) {
+		var insideuser = {
+			displayName: '홍길동',
+			uid: 'asjdfkasjfl'
+		}
+		// 할일을 하고.
+		fn(indsieduser); // 맡겨진 함수를 실행.
+	}
+
+	onAuthStateChanged(function(user) {
+		console.log(user.displayName);
+		console.log(user);
+	});
+
+	$('.nnn').animate({"left":"100px"},1000, function(){
+
+	})
+</script>
