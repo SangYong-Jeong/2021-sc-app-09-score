@@ -1,0 +1,27 @@
+<script>
+	// Constructor Object: return Literal Object 
+	function Man() {
+
+	}
+
+var hongkd = new Man();
+var hongks = new Man();
+
+hongkd.name = '홍길동';
+hongks.name = '홍길순';
+
+console.log(hongkd);
+console.log(hongks);
+
+function Car(_name, _type, _color) {
+	this.name = _name;
+	this.type = _type;
+	this.color = _color;
+}
+
+var arr = new Array();
+var myCar = new Car('bongbong', 'sonata', 'white'); // new Literal (101)
+var myCar2 = new Car('bangbang', 'santaf', 'black'); // new Literal (102)
+
+console.log(myCar, myCar2);
+</script>
