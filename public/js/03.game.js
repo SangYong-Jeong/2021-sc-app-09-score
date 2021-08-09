@@ -16,4 +16,3 @@
  console.log( $('form[name="initForm"] input[name="cnt"]').val() ); //jquery
  console.log( $('#cnt').val() ); //jquery
 
-
