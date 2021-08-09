@@ -70,20 +70,11 @@ function onStart () {
 	// $('.member-wp').stop().animate({'left': getTarget()}, 2000);
 	$('.member-wp').each(function (i) {
 		var speed = random(1500, 200);
-		console.log(i, speed);
+		// console.log(i, speed);
 		$(this).stop().animate({'left': getTarget()}, 0, function() {
 			console.log('Animation 끝!');
 		});
 	});
-	console.log('each 끝!')
-
-	setTimeout(function() {
-		console.log('setTimeout');
-	}, 0);
-	console.log('애니메이션 후');
-
-	// 데이터베이스 저장 - 추후 구현
-	// modal창
 }
 
 function onReset () {
