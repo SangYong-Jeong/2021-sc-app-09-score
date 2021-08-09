@@ -1,12 +1,13 @@
 .wrapper {max-width: 1200px; margin: auto;}
 .main-title {font-size: 1.25em; font-weight: bold; padding: 1em; margin: .5em 0;}
 
-form[name="initForm"] {margin-bottom: 2em; border-bottom: 2px solid #ddd; padding-bottom: .5em;}
+form[name="initForm"] {margin-bottom: 2em; border-bottom: 1px solid #dedede; padding-bottom: .5em;}
 form[name="initForm"] input[name="cnt"] {font-size: 1.5em; width: 90px; text-align: center;}
 form[name="initForm"] button {font-size: 1.25em; padding: .375em .75em; margin-left: .25em;}
 form[name="initForm"] .bt-init {}
 form[name="initForm"] .bt-start {display: none;}
 form[name="initForm"] .bt-reset {display: none;}
+
 
 .stage-wrap {}
 .stage-wrap .member-wp {width: 120px; margin-bottom: 2em;}
@@ -24,3 +25,4 @@ form[name="initForm"] .bt-reset {display: none;}
 	to {transform: rotate(15deg);}
 }
 .stage-wrap .member-wp input[name="member"] {margin-top: .5em; text-align: center;}
+
