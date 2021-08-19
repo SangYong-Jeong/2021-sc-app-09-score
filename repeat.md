@@ -30,3 +30,5 @@
 # input type 중 file 타입만이 files라는 속성 값 (배열을 갖을 수 있다. [0]에 file에 대한 data값이 존재)
 
 # storage root는 db와 다르게 storage.ref()로 바로 접근 가능하다. 그 안에 child를 넣어 폴더를 생성한다. 이후 넣을 파일은 이름을 정해 storage.ref().child('imgs').child(이름).put(넣을 파일)로 넣을 수 있다. <- 이 부분 중요 즉 파일을 서버에 업로드 하는 방법
+
+# firebase init을 재 init 할 수 있다. 이 경우 파일들 덮어 쓰는 것 주의 하면서 해야한다.
