@@ -19,11 +19,6 @@
 .recent-wrapper .list-wrap .list-wp {display: flex; align-items: flex-start; width: 101%;}
 .recent-wrapper .list-wrap .list-wp .list {width: 19%; margin-right: 1%;}
 
-
-/********************** write-wrapper *********************/
-
-
-
 /********************** list-wrapper *********************/
 
 
@@ -31,6 +26,9 @@
 /********************** footer-wrapper *********************/
 
 
+/********************** modal-wrapper *********************/
+.write-wrapper {padding: 1em; text-align: center;}
+.write-wrapper .bt-write {}
 
 
 
