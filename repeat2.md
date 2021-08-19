@@ -1,6 +1,12 @@
 # uuid(범용 식별자) -> uuid.js 파일을 이용해서 uuidv4()로 uuid 생성 가능
 
 # onUploading, onUploadError, onUploaded, onSuccess, onError -> onsubmit 안에 이 함수들을 넣은 이유는 외부에서 쓰이지 않고 onSubmit에서만 쓰이는 변수들을 같이 쓰기 위함이다.
+## onUploading 이벤트는 현재 업로딩 되고 있는 상태를 인자로 업로딩 되면서 보내준다.
+## onUploaded 이벤트는 인자를 콜백함수에 보내주지 않는다.
+### upfile = onUploading이 보내주는 인자; upfile.ref.getDownloadURL().then(onSuccess).catch(onError); -> ref는 내가 보내는 파일이 저장된 위치를 의미한다. getDownloadURL() 메서드는 내가 보내는 파일의 위치에서 다운로드 받을 수 있는 URL 정보를 받아오는 역할을 한다. 이후 promise절을 이용해 DownloadURL을 잘 받아 왔는지 아닌지 확인한다는 의미 -> getDownloadURL()을 통해 받는 DownloadURL은 onSuccess의 인자로 들어가게 된다.
+
+# if(err.code === 'storage/unauthorized') location.href = '../403.html' -> err 발생시 err.code가 'storage/unauthorized'일 경우 location.href = '../403.html' // -> 클라이언트가 서버에 다시 요청하고 서버 경로에 있는 '../403.html' 파일을 보여줘 하는것(원래 요청한거에서 위로 올라가 403.html 파일을 보여준다고 생각됨)
+
 
 # video는 태그 달고 그안에 source를 만들어서 사용할 수 있다. 아니면 video 태그만으로도 가능 -> 웹에서 mp4는 다 돌아가는데 다른 확장자명은 안 돌아갈 수 있음. 
 ## video controls : 바가 생기고 시간 이동가능

@@ -27,8 +27,10 @@
 
 # storage 같은 경우 firebase-storage.js 넣은 후 해야 한다. 
 
-# input type 중 file 타입만이 files라는 속성 값 (배열을 갖을 수 있다. [0]에 file에 대한 data값이 존재)
+# input type 중 file 타입만이 files라는 속성 값 (배열을 갖을 수 있다. [0]에 file에 대한 data값이 존재) -> 여러 파일을 보낼경우 배열안의 내용은 순차적으로 증가 될듯
 
 # storage root는 db와 다르게 storage.ref()로 바로 접근 가능하다. 그 안에 child를 넣어 폴더를 생성한다. 이후 넣을 파일은 이름을 정해 storage.ref().child('imgs').child(이름).put(넣을 파일)로 넣을 수 있다. <- 이 부분 중요 즉 파일을 서버에 업로드 하는 방법
+
+# 파일을 storage에 저장할 때는 파일 original name 이 아닌 savename으로 저장한다. 왜냐하면 한 폴더에 똑같은 이름이 들어갈 수도 있기 때문이다. 따라서 uuid를 이용해 파일마다 고유한 식별자를 이름으로 지정해 파일을 저장한다.
 
 # firebase init을 재 init 할 수 있다. 이 경우 파일들 덮어 쓰는 것 주의 하면서 해야한다.
