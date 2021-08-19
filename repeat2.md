@@ -12,3 +12,21 @@
 ## data.val()로 데이터베이스에 있는 데이터의 값에 접근 가능
 
 # String에서도 사용가능한 메서드 -> 문자열indexOf('문자열') -> (문자열)이 문자열의 어느 부분에서 시작하는지 값을 줌 없으면 -1
+
+# container는 1em의 좌우 패딩을 갖고 있다. + 반응형 처리도 되어있음
+
+# row를 부모에게 주면 자식들이 flex 된다. row는 12칸으로 나뉘어져 있음 row되면 container padding 없어짐
+
+# col은 row에 들어가는 칸을 의미 (d-lg-none lg size에서 display: none;)
+## col은 전체 기준  반응형 size: col-sm, col-md, col-lg, col-xl  (w3c 사이트에 정확한 size 나와있음 bootstrap learn 들어가서 grid size 확인) 
+### link -> https://www.w3schools.com/bootstrap4/bootstrap_grid_system.asp
+
+# html 특수 기호들 존재 ex) &laquo; (<<), &lt; (<) ...
+
+# table에서는 vertical align으로 세로 정렬 가능
+
+# Design Google -> Material Icons에서 Icon 사용 가능 -> class or img or 유니코드( &에 code 붙여서 작성 )로 사용 가능
+
+# jQuery -> 이벤트를 브라우저 띄우자마자 발생시켜주는 method = trigger('이벤트')
+
+# resize 이벤트 적용해서 높이 맞추기
