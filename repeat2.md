@@ -7,3 +7,8 @@
 ## video autoplay : 자동재생 (muted 있을 때에만 가능)
 ## video muted : 음소거
 ## video loop : 무한반복
+
+# child_added 이벤트가 콜백함수에 주는 인자는 data -> 그안에 data.key, data.val() 있음
+## data.val()로 데이터베이스에 있는 데이터의 값에 접근 가능
+
+# String에서도 사용가능한 메서드 -> 문자열indexOf('문자열') -> (문자열)이 문자열의 어느 부분에서 시작하는지 값을 줌 없으면 -1
