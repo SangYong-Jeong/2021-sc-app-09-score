@@ -16,7 +16,7 @@ var firebaseStorage = firebase.storage();
 var user = null;
 var db = firebaseDatabase.ref('root/board');
 var storage = firebaseStorage.ref('root/board'); 
-
+var allowType = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4'];
 
 /************* element init ***************/
 var btSave = document.querySelector('.write-wrapper .bt-save');      // 글작성버튼    /* 주석을 자주 이용해서 정리해 놔야 나중에 볼 때 편함 */
@@ -80,8 +80,8 @@ function onWriteSubmit(e) { // btSave클릭시 (글 저장시) ,  validation 검
 	e.preventDefault();
 	var title = writeForm.title;
 	var writer = writeForm.writer;
-	var upfile = writeForm.upfile.files;
-	var content = writeForm.content.value.trim();
+	var upfile = writeForm.upfile;
+	var content = writeForm.content;
 	if(!requiredValid(title)) {
 		title.focus();
 		return false;
@@ -90,6 +90,17 @@ function onWriteSubmit(e) { // btSave클릭시 (글 저장시) ,  validation 검
 		writer.focus();
 		return false;
 	}
+	if(!upfileValid(upfile)) {
+		return false;
+	}
+	// firebase save
+	var data = {};
+	data.user = user.uid
+	data.title = title.value;
+	data.writer = writer.value;
+	data.content = content.value;
+	data.file = (upfile.files.length) ? upfile.files[0] : {};
+	db.push(data).key; // firebase 저장 - > .key는 생략가능 data의 제목을 key(난수)로 생성해주는것
 }
 
 function onRequiredValid (e) { // title, writer에서 blur, keyup되면
@@ -112,8 +123,24 @@ function requiredValid(el) {
 }
 
 
-function onUpfileBlur (e) { // upfile에서 blur되면
+function onUpfileValid (e) { // upfile에서 change되면
+	upfileChange(this);
+}
 
+function upfileValid(el) {
+	var next = $(el).next()[0];
+	if(el.files.length > 0 && allowType.indexOf(el.files[0].type) === -1) {
+			el.classList.add('active');
+			next.classList.add('active');
+			console.log('false');
+			return false;
+	}
+	else {
+		el.classList.remove('active');
+		next.classList.remove('active');
+		console.log('true');
+		return true;
+	}
 }
 
 
@@ -129,7 +156,7 @@ writeForm.title.addEventListener('blur', onRequiredValid);  /* blur는 focus를 
 writeForm.title.addEventListener('keyup', onRequiredValid);  
 writeForm.writer.addEventListener('blur', onRequiredValid);
 writeForm.writer.addEventListener('keyup', onRequiredValid);
-writeForm.upfile.addEventListener('blur', onUpfileBlur);
+writeForm.upfile.addEventListener('change', onUpfileValid);  /* change event -> 값이 바뀐다면 */
 
 
 
