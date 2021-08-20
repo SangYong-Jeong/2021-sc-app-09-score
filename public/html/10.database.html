@@ -1,0 +1,60 @@
+<script src="../js/lodash.min.js"></script>
+<script src="/__/firebase/8.9.1/firebase-app.js"></script>
+<script src="/__/firebase/8.9.1/firebase-database.js"></script>
+<script src="/__/firebase/init.js?useEmulator=true"></script>
+<script>
+	var db = firebase.database().ref('root/board');
+
+	// 1. 실시간 이벤트
+	// db.on('child_added', onAdded);  
+	// db.on('child_changed', onChanged);         
+	// db.on('child_removed', onRemoved);    
+
+	// 2. 사용자 이벤트
+	// db.push({ 넣을내용 }).key;
+	// db.child('key').remove();
+	// db.child('key').set({바뀔내용}); -> 빈 객체 넣으면 삭제됨
+	// db.get().then(onGet).catch(onError); // 모든데이터 가져오기
+	// db.ordeByKey().get().then(onGet).catch(onError); // 모든 데이터를 key 오름차순으로 가져오기
+	// db.ordeByKey().once().then(onGet).catch(onError); // 모든 데이터를 key 오름차순으로 한번만 가져오기
+	// db.ordeByChild('readnum').get().then(onGet).catch(onError); // readnum으로 정렬
+	// db.orderByKey().limitToFirst(5).get().then(onGet).catch(onError); // 맨 처음부터 몇개 -> limitToFirst는  앞에 orderBy로 정리 해줘야 사용 가능
+	/*
+	db.orderByKey().limitToLast(5).get().then(onGetLast).catch(onError); // 맨 뒤에서부터 몇개
+	function onGetLast(r) {
+		var arr = [];                 
+		r.forEach(function (v, i) {             // 객체를 배열에 넣고
+			arr.push(v);                 
+		});
+		arr.reverse().forEach(function (v,i) {  // 배열을 뒤집어서 순회시키고,
+			console.log(v.key)
+		});
+	}
+	*/
+
+
+	// db.orderByKey().once().then(onGet).catch(onError);
+
+	db.orderByKey().limitToLast(3).once().then(onGet).catch(onError);
+	function onGet(r) {                 
+		r.forEach(function (v, i) { 
+			console.log(v.key); 
+		});
+	}
+
+	function onError(err) {
+		console.log(err);
+	}
+
+	function onAdded(r) {
+		console.log(r.val());
+	}
+
+	function onChanged(r) {
+		console.log(r.val());
+	}
+
+	function onRemoved(r) {
+		console.log(r.val());
+	}
+</script>
