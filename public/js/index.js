@@ -6,6 +6,17 @@ $().parents()  // 내 조상들         parentNode
 $().siblings() // 내 형제자매       
 $().children() // 내 자식           childNodes
 $().find()     // 내 자손           childNodes
+
+firebase data 처리
+1. 실시간
+db.on('child_added', onAdded);             // return 추가된 데이터
+db.on('child_changed', onChanged);         // return 수정된 데이터
+db.on('child_removed', onRemoved);         // return 삭제된 데이터
+2. 이벤트에 의해서...
+db.push().key                              // 데이터 저장
+db.set({})                                 // 데이터 수정
+db.remove()                                // 데이터 삭제
+db.get()                                   // 데이터 가져오기
 */
 
 /************* Global init ***************/
@@ -82,6 +93,10 @@ function onWriteSubmit(e) { // btSave클릭시 (글 저장시) ,  validation 검
 	var writer = writeForm.writer;
 	var upfile = writeForm.upfile;
 	var content = writeForm.content;
+	if(!user) {
+		alert('로그인 후 이용하세요.');
+		return false
+	}
 	if(!requiredValid(title)) {
 		title.focus();
 		return false;
@@ -99,8 +114,32 @@ function onWriteSubmit(e) { // btSave클릭시 (글 저장시) ,  validation 검
 	data.title = title.value;
 	data.writer = writer.value;
 	data.content = content.value;
-	data.file = (upfile.files.length) ? upfile.files[0] : {};
-	db.push(data).key; // firebase 저장 - > .key는 생략가능 data의 제목을 key(난수)로 생성해주는것
+	data.createdAt = new Date().getTime();
+	if(upfile.files.length) {   // 파일이 존재하면 처리 로직
+			var file = upfile.files[0];
+				var savename = genFile();
+				var uploader = storage.child(savename.folder).child(savename.file).put(file);
+				uploader.on('state_changed', onUploading, onUploadError, onUploaded);
+		}
+		else {
+			db.push(data).key;
+		}
+		function onUploading (snapshot) { // 파일이 업로드 되는동안
+			console.log('uploading', snapshot.bytesTransferred);
+			console.log('uploading', snapshot.totalBytes);
+			console.log('================');
+			upfile = snapshot;
+		}
+		
+		function onUploaded () {  // 파일 업로드 완료 후
+			upfile.ref.getDownloadURL().then(onSuccess).catch(onError);
+		}
+		
+		function onUploadError (err) {  // 파일 업로드 실패 시
+			console.log('error', err);
+			if(err.code === 'storage/unauthorized') location.href = '../403.html'
+			else console.log('error', err);
+		}
 }
 
 function onRequiredValid (e) { // title, writer에서 blur, keyup되면
@@ -158,6 +197,9 @@ writeForm.writer.addEventListener('blur', onRequiredValid);
 writeForm.writer.addEventListener('keyup', onRequiredValid);
 writeForm.upfile.addEventListener('change', onUpfileValid);  /* change event -> 값이 바뀐다면 */
 
+db.on('child_added', onAdded);
+db.on('child_changed', onChanged);
+db.on('child_removed', onRemoved);
 
 
 
