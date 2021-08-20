@@ -118,45 +118,45 @@ function onWriteSubmit(e) { // btSave클릭시 (글 저장시) ,  validation 검
 	data.content = content.value;
 	data.createdAt = new Date().getTime();
 	if(upfile.files.length) {   // 파일이 존재하면 처리 로직
-				var upload = null;
-				var file = upfile.files[0];
-				var savename = genFile();
-				var uploader = storage.child(savename.folder).child(savename.file).put(file);
-				uploader.on('state_changed', onUploading, onUploadError, onUploaded);
-				data.file = {folder: 'root/board/'+savename.folder, name: savename.file};
-		}
+		var upload = null;
+		var file = upfile.files[0];
+		var savename = genFile();
+		var uploader = storage.child(savename.folder).child(savename.file).put(file);
+		uploader.on('state_changed', onUploading, onUploadError, onUploaded);
+		data.file = {folder: 'root/board/'+savename.folder, name: savename.file};
+	}
+	else {
+		db.push(data).key;
+		onClose();
+	}
+	function onUploading (snapshot) { // 파일이 업로드 되는동안
+		loading.style.display = 'flex';
+		upload = snapshot;
+	}
+	
+	function onUploaded () {  // 파일 업로드 완료 후
+		upload.ref.getDownloadURL().then(onSuccess).catch(onError);
+	}
+	
+	function onUploadError (err) {  // 파일 업로드 실패 시
+		loading.style.display = 'none';
+		if(err.code === 'storage/unauthorized') location.href = '../403.html'
 		else {
-			db.push(data).key;
-			onClose();
+			alert('파일 업로드에 실패하였습니다. 관리자에게 문의 후 다시 시도해 주세요.');
+			console.log('error', err);
 		}
-		function onUploading (snapshot) { // 파일이 업로드 되는동안
-			loading.style.display = 'flex';
-			upload = snapshot;
-		}
-		
-		function onUploaded () {  // 파일 업로드 완료 후
-			upload.ref.getDownloadURL().then(onSuccess).catch(onError);
-		}
-		
-		function onUploadError (err) {  // 파일 업로드 실패 시
-			loading.style.display = 'none';
-			if(err.code === 'storage/unauthorized') location.href = '../403.html'
-			else {
-				alert('파일 업로드에 실패하였습니다. 관리자에게 문의 후 다시 시도해 주세요.');
-				console.log('error', err);
-			}
-		}
+	}
 
-		function onSuccess (r) { // r: 실제 웹으로 접근 가능한 경로
-			data.file.path = r;
-			db.push(data).key;
-			onClose();
-		}
-		
-		function onError(err) {
-			alert('파일 가져오기에 실패하였습니다. 관리자에게 문의 후 다시 시도해 주세요.');
-			console.log(err);
-		}
+	function onSuccess (r) { // r: 실제 웹으로 접근 가능한 경로
+		data.file.path = r;
+		db.push(data).key;
+		onClose();
+	}
+	
+	function onError(err) {
+		alert('파일 가져오기에 실패하였습니다. 관리자에게 문의 후 다시 시도해 주세요.');
+		console.log(err);
+	}
 }
 
 function onRequiredValid (e) { // title, writer에서 blur, keyup되면
