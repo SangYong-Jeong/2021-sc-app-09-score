@@ -24,6 +24,7 @@ body >.gnb {min-height: calc(100vh - 131px);}
 .recent-wrapper .list-wrap .list-wp .list {width: 19%; margin-right: 1%;}
 
 /********************** list-wrapper *********************/
+.list-wrapper .title-wrap {display: flex; justify-content: space-between; align-items: flex-end;}
 .list-wrapper .list-tbl {border-bottom: 1px solid #dedede;}
 .list-wrapper .list-tbl th:nth-child(1) {width: 10%;}  /* th한테만 size를 주면 td들은 따라온다 */
 .list-wrapper .list-tbl th:nth-child(2) {width: auto;}

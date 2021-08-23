@@ -42,14 +42,15 @@ var writeWrapper = document.querySelector('.write-wrapper')                // �
 var writeForm = document.writeForm;                                        // 글작성 form
 var loading = document.querySelector('.write-wrapper .loading-wrap');      // 파일 업로드 로딩바
 var tbody = document.querySelector('.list-tbl tbody');                     // tbody
+var gnb = document.querySelector('.gnb');                     // tbody
 var observerEl = document.querySelector('.observer-el');                     // tbody
 
 
 var page = 1;
-var listCnt = 3; // 한 페이지에 보여질 list 수
+var listCnt = 1; // 한 페이지에 보여질 list 수
 var pagerCnt = 3; // pager의 숫자가 몇개 나올것인가 
 var totalRecord = 0;
-var observer = new IntersectionObserver(onObserver, {});
+var observer;
 
 
 /************* user function *************/
@@ -73,7 +74,8 @@ function setHTML(k, v) {
 	html += '<td>0</td>';
 	html += '</tr>';
 	tbody.innerHTML += html;
-	// console.log('setHTML', v);
+	var tr = tbody.querySelectorAll('tr');
+	observer.observe(tr[tr.length-1]);
 	sortTr();
 }
 
@@ -90,13 +92,9 @@ function onObserver(el, observer) {
 		console.log(v.isIntersecting);
 		if(v.isIntersecting) {
 			var tr = tbody.querySelectorAll('tr');
-			if(tr.length > 0) {
-				var last =  Number(tr[tr.length - 1].dataset['idx']);
-				ref.startAfter(last).limitToFirst(listCnt).get().then(onGetData).catch(onGetError);
-			}
-			else {
-				ref.limitToFirst(listCnt).get().then(onGetData).catch(onGetError);
-			}
+			var last =  Number(tr[tr.length - 1].dataset['idx']);
+			ref.startAfter(last).limitToFirst(listCnt).get().then(onGetData).catch(onGetError)
+			observer.unobserve(v.target);
 		}
 	});
 }
@@ -317,5 +315,5 @@ loading.addEventListener('click', onLoadingClick);
 
 
 /************* start init ****************/
-// listInit();
-observer.observe(observerEl);
+listInit();
+observer  = new IntersectionObserver(onObserver, {rootMargin: '-100px'});
