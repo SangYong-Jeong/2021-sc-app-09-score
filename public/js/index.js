@@ -42,15 +42,19 @@ var writeWrapper = document.querySelector('.write-wrapper')                // �
 var writeForm = document.writeForm;                                        // 글작성 form
 var loading = document.querySelector('.write-wrapper .loading-wrap');      // 파일 업로드 로딩바
 var tbody = document.querySelector('.list-tbl tbody');                     // tbody
+var observerEl = document.querySelector('.observer-el');                     // tbody
 
 
 var page = 1;
 var listCnt = 3; // 한 페이지에 보여질 list 수
 var pagerCnt = 3; // pager의 숫자가 몇개 나올것인가 
 var totalRecord = 0;
+var observer = new IntersectionObserver(onObserver, {});
+
 
 /************* user function *************/
-function listInit(key) {
+function listInit() {
+	tbody.innerHTML = '';
 	ref.limitToFirst(listCnt).get().then(onGetData).catch(onGetError);
 }
 
@@ -69,9 +73,34 @@ function setHTML(k, v) {
 	html += '<td>0</td>';
 	html += '</tr>';
 	tbody.innerHTML += html;
+	// console.log('setHTML', v);
+	sortTr();
+}
+
+function sortTr() {
+	var total = tbody.querySelectorAll('tr').length;
+	tbody.querySelectorAll('tr').forEach(function(v, i) {
+		v.querySelector('td').innerHTML = total - i;
+	});
 }
 
 /************* event callback ************/
+function onObserver(el, observer) {
+	el.forEach(function (v, i) {
+		console.log(v.isIntersecting);
+		if(v.isIntersecting) {
+			var tr = tbody.querySelectorAll('tr');
+			if(tr.length > 0) {
+				var last =  Number(tr[tr.length - 1].dataset['idx']);
+				ref.startAfter(last).limitToFirst(listCnt).get().then(onGetData).catch(onGetError);
+			}
+			else {
+				ref.limitToFirst(listCnt).get().then(onGetData).catch(onGetError);
+			}
+		}
+	});
+}
+
 function onGetData (r) {
 	r.forEach(function (v, i) {
 		setHTML(v.key, v.val());
@@ -179,32 +208,35 @@ function onWriteSubmit(e) { // btSave클릭시 (글 저장시) ,  validation 검
 			data.upfile = {folder: 'root/board/'+savename.folder, name: savename.file, file: file};
 		}
 		else {
-			db.push(data).key;
+			db.push(data).key; // fireabse 저장
 			onClose();
-		}
-		function onUploading (snapshot) { // 파일이 업로드 되는동안
-			loading.style.display = 'flex';
-			upload = snapshot;
-		}
-		
-		function onUploaded () {  // 파일 업로드 완료 후
-			upload.ref.getDownloadURL().then(onSuccess).catch(onError);
-		}
-		
-		function onUploadError (err) {  // 파일 업로드 실패 시
-			loading.style.display = 'none';
-			if(err.code === 'storage/unauthorized') location.href = '../403.html'
-			else {
-				alert('파일 업로드에 실패하였습니다. 관리자에게 문의 후 다시 시도해 주세요.');
-				console.log('error', err);
-			}
+			listInit();
 		}
 	}
 
+	function onUploading (snapshot) { // 파일이 업로드 되는동안
+		loading.style.display = 'flex';
+		upload = snapshot;
+	}
+	
+	function onUploaded () {  // 파일 업로드 완료 후
+		upload.ref.getDownloadURL().then(onSuccess).catch(onError);
+	}
+	
+	function onUploadError (err) {  // 파일 업로드 실패 시
+		loading.style.display = 'none';
+		if(err.code === 'storage/unauthorized') location.href = '../403.html'
+		else {
+			alert('파일 업로드에 실패하였습니다. 관리자에게 문의 후 다시 시도해 주세요.');
+			console.log('error', err);
+		}
+		
+	}
 	function onSuccess (r) { // r: 실제 웹으로 접근 가능한 경로
 		data.upfile.path = r;
 		db.push(data).key;
 		onClose();
+		listInit();
 	}
 	
 	function onError(err) {
@@ -285,4 +317,5 @@ loading.addEventListener('click', onLoadingClick);
 
 
 /************* start init ****************/
-listInit();
+// listInit();
+observer.observe(observerEl);
