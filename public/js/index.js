@@ -26,8 +26,10 @@ var firebaseDatabase = firebase.database();
 var firebaseStorage = firebase.storage();
 var user = null;
 var db = firebaseDatabase.ref('root/board');
+var ref = db.orderByChild('idx');
 var storage = firebaseStorage.ref('root/board'); 
 var allowType = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4'];
+var exts = ['../img/jpg.png', '../img/png.png', '../img/gif.png', '../img/video.png'];
 
 /************* element init ***************/
 var btSave = document.querySelector('.write-wrapper .bt-save');            // 글작성버튼    /* 주석을 자주 이용해서 정리해 놔야 나중에 볼 때 편함 */
@@ -39,22 +41,59 @@ var btReset = document.querySelector('.write-wrapper .bt-reset')           // �
 var writeWrapper = document.querySelector('.write-wrapper')                // 글작성 모달창
 var writeForm = document.writeForm;                                        // 글작성 form
 var loading = document.querySelector('.write-wrapper .loading-wrap');      // 파일 업로드 로딩바
+var tbody = document.querySelector('.list-tbl tbody');                     // tbody
+
+
+var page = 1;
+var listCnt = 3; // 한 페이지에 보여질 list 수
+var pagerCnt = 3; // pager의 숫자가 몇개 나올것인가 
+var totalRecord = 0;
 
 /************* user function *************/
+function listInit(key) {
+	ref.limitToFirst(listCnt).get().then(onGetData).catch(onGetError);
+}
 
-
+function setHTML(k, v) {
+	var n = tbody.querySelectorAll('tr').length + 1;
+	var html = '<tr data-idx="'+v.idx+'" data-key="'+k+'">';
+	html += '<td>'+n+'</td>';
+	html += '<td>';
+	if(v.upfile) {
+		html += '<img src="'+exts[allowType.indexOf(v.upfile.file.type)]+'" class="icon">';
+	}
+	html += v.title;
+	html += '</td>';
+	html += '<td>'+v.writer+'</td>';
+	html += '<td>'+moment(v.createAt).format('YYYY-MM-DD')+'</td>';
+	html += '<td>0</td>';
+	html += '</tr>';
+	tbody.innerHTML += html;
+}
 
 /************* event callback ************/
+function onGetData (r) {
+	r.forEach(function (v, i) {
+		setHTML(v.key, v.val());
+	});
+}
+
+function onGetError (err) {
+	console.log(err);
+}
+
 // onAuthStateChanged 
 function onAuthChanged (r) { // login, logout 상태가 변하면...
 	user = r;
 	if (user) { // 로그인 되면 UI가 할일
 		btLogin.style.display = 'none';
 		btLogout.style.display = 'block';
+		btWrite.style.display = ''; // 빈문자열로 넣으면 인라인 css가 아무 값도 안갖으므로 css파일 값의 css를 가져간다.
 	}
 	else { // 로그아웃 되면 UI가 할일
 		btLogin.style.display = 'block';
 		btLogout.style.display = 'none';
+		btWrite.style.display = 'none';
 	}
 }
 
@@ -116,39 +155,54 @@ function onWriteSubmit(e) { // btSave클릭시 (글 저장시) ,  validation 검
 	data.title = title.value;
 	data.writer = writer.value;
 	data.content = content.value;
-	data.createdAt = new Date().getTime();
-	if(upfile.files.length) {   // 파일이 존재하면 처리 로직
-		var upload = null;
-		var file = upfile.files[0];
-		var savename = genFile();
-		var uploader = storage.child(savename.folder).child(savename.file).put(file);
-		uploader.on('state_changed', onUploading, onUploadError, onUploaded);
-		data.file = {folder: 'root/board/'+savename.folder, name: savename.file};
-	}
-	else {
-		db.push(data).key;
-		onClose();
-	}
-	function onUploading (snapshot) { // 파일이 업로드 되는동안
-		loading.style.display = 'flex';
-		upload = snapshot;
-	}
-	
-	function onUploaded () {  // 파일 업로드 완료 후
-		upload.ref.getDownloadURL().then(onSuccess).catch(onError);
-	}
-	
-	function onUploadError (err) {  // 파일 업로드 실패 시
-		loading.style.display = 'none';
-		if(err.code === 'storage/unauthorized') location.href = '../403.html'
+	data.createAt = new Date().getTime();
+	db.limitToLast(1).get().then(getLastIdx).catch(onGetError);
+	function getLastIdx(r) {
+		if(r.numChildren() === 0) {
+			data.idx = 999999999;
+		} 
 		else {
-			alert('파일 업로드에 실패하였습니다. 관리자에게 문의 후 다시 시도해 주세요.');
-			console.log('error', err);
+			r.forEach(function (v) {
+				data.idx = Number(v.val().idx) - 1;
+			});
+		}
+		if(upfile.files.length) {   // 파일이 존재하면 처리 로직
+			var upload = null;
+			var file = {
+				name: upfile.files[0].name,
+				size: upfile.files[0].size,
+				type: upfile.files[0].type,
+			}
+			var savename = genFile();
+			var uploader = storage.child(savename.folder).child(savename.file).put(file);
+			uploader.on('state_changed', onUploading, onUploadError, onUploaded);
+			data.upfile = {folder: 'root/board/'+savename.folder, name: savename.file, file: file};
+		}
+		else {
+			db.push(data).key;
+			onClose();
+		}
+		function onUploading (snapshot) { // 파일이 업로드 되는동안
+			loading.style.display = 'flex';
+			upload = snapshot;
+		}
+		
+		function onUploaded () {  // 파일 업로드 완료 후
+			upload.ref.getDownloadURL().then(onSuccess).catch(onError);
+		}
+		
+		function onUploadError (err) {  // 파일 업로드 실패 시
+			loading.style.display = 'none';
+			if(err.code === 'storage/unauthorized') location.href = '../403.html'
+			else {
+				alert('파일 업로드에 실패하였습니다. 관리자에게 문의 후 다시 시도해 주세요.');
+				console.log('error', err);
+			}
 		}
 	}
 
 	function onSuccess (r) { // r: 실제 웹으로 접근 가능한 경로
-		data.file.path = r;
+		data.upfile.path = r;
 		db.push(data).key;
 		onClose();
 	}
@@ -220,6 +274,8 @@ writeForm.upfile.addEventListener('change', onUpfileValid);  /* change event -> 
 loading.addEventListener('click', onLoadingClick);
 
 
+
+
 // db.on('child_added', onAdded);
 // db.on('child_changed', onChanged);
 // db.on('child_removed', onRemoved);
@@ -229,3 +285,4 @@ loading.addEventListener('click', onLoadingClick);
 
 
 /************* start init ****************/
+listInit();
