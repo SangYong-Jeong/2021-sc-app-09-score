@@ -1,7 +1,7 @@
-/***************** global init ***************/
-body >.gnb {min-height: calc(100vh - 131px);}
-.wrapper {max-width: 1167px; margin: 1.5em auto;}
-.title-wrap {margin-bottom: .5em; border-left: 3px solid #9be679; padding-left: .5em;}
+/**************** global init ****************/
+body > .gnb {min-height: calc(100vh - 131px);}
+.wrapper {max-width: 1167px; margin: 1.5em auto; overflow: hidden;}
+.title-wrap {margin-bottom: .5em; border-left: 3px solid #9be67e; padding-left: .5em;}
 .title-wrap h2.title {font-size: 1.25em;}
 .material-icons {font-size: 1em; line-height: 1; user-select: none;}
 
@@ -16,17 +16,18 @@ body >.gnb {min-height: calc(100vh - 131px);}
 .header-wrapper .bt-login {background-color: darkslategrey;}
 .header-wrapper .bt-logout {display: none; background-color: #572128;}
 
+
 /********************** recent-wrapper *********************/
-.recent-wrapper .title-wrap {margin-bottom: .5em; border-left: 3px solid #9be679; padding-left: .5em;}
-.recent-wrapper .title-wrap h2.title {font-size: 1.25em;}
 .recent-wrapper .list-wrap {border: 1px solid #efefef; padding: .5em; overflow: hidden;}
 .recent-wrapper .list-wrap .list-wp {display: flex; align-items: flex-start; width: 101%;}
-.recent-wrapper .list-wrap .list-wp .list {width: 19%; margin-right: 1%;}
+.recent-wrapper .list-wrap .list {width: 19%; margin-right: 1%; background-position: center; background-size: cover;}
+.recent-wrapper .list-wrap .list .ratio {height: 0; padding-top: 56.25%;}
+
 
 /********************** list-wrapper *********************/
 .list-wrapper .title-wrap {display: flex; justify-content: space-between; align-items: flex-end;}
 .list-wrapper .list-tbl {border-bottom: 1px solid #dedede;}
-.list-wrapper .list-tbl th:nth-child(1) {width: 10%;}  /* th한테만 size를 주면 td들은 따라온다 */
+.list-wrapper .list-tbl th:nth-child(1) {width: 10%;}
 .list-wrapper .list-tbl th:nth-child(2) {width: auto;}
 .list-wrapper .list-tbl th:nth-child(3) {width: 15%;}
 .list-wrapper .list-tbl th:nth-child(4) {width: 15%;}
@@ -36,18 +37,18 @@ body >.gnb {min-height: calc(100vh - 131px);}
 .list-wrapper .list-tbl td {vertical-align: middle;}
 .list-wrapper .list-tbl td:nth-child(2) {text-align: left;}
 
-.list-wrapper .page-link {color: #333; cursor: pointer; user-select: none;}  /* user-select는 글씨 긁히는거 허용 하는거 즉 드래그 할 수 있게 하는것 */
+.list-wrapper .page-link {color: #333; cursor: pointer; user-select: none;}
 .list-wrapper .page-item.active .page-link {background-color: #348345; border-color: #348345;}
 .pager-wrap .material-icons {transform: translateY(2px);}
+
 
 /********************** footer-wrapper *********************/
 .footer-wrapper {padding: 2em 1em; text-align: center; background-color: #343a40; color: #fff;}
 .footer-wrapper .link-wrap {font-size: 1.5em; margin-bottom: 1em;}
-.footer-wrapper .link-wrap a:hover {text-decoration: none; color: khaki;}
+.footer-wrapper .link-wrap a:hover {text-decoration:none; color:khaki;}
 
 
-
-/********************** write-wrapper *********************/
+/********************** modal-wrapper *********************/
 .write-wrapper {position: fixed; left: 0; top: 0; width: 100%; height: 100vh; background-color: rgba(0, 0, 0, .8); display: flex; align-items: center; justify-content:center;}
 .write-wrapper .write-wrap {min-width: 700px; background-color: #fff; padding: 2em; border-radius: 6px; position: relative; overflow: hidden;}
 .write-wrapper .bt-close {background-color: #dc3545; color: #fff; width: 50px; height: 50px; font-size: 28px; display: flex; align-items: center; justify-content: center; position: absolute; top: 0; right: 0; cursor: pointer;}
@@ -58,13 +59,15 @@ body >.gnb {min-height: calc(100vh - 131px);}
 .write-wrapper .bt-wrap {text-align: center;}
 .write-wrapper .required {color: #dc3545;}
 .write-wrapper .summary.required-comment {padding: .5em 0; font-size: .875em; color: #4174aa; display: block;}
-.write-wrapper .summary.active.required-comment {color: #dc3545; display: block; text-decoration: underline;}
+.write-wrapper .summary.required-comment.active {color: #dc3545; display: block; text-decoration: underline;}
 .write-wrapper textarea {height: 200px; overflow-y: auto;}
-.write-wrapper .required-comment {padding-top: .5em; font-size: .875em; color:#dc3545; display: none;}
+.write-wrapper .required-comment {padding-top: .5em; font-size: .875em; color: #dc3545; display: none;}
 .write-wrapper .required-comment.active {display: block;}
 .write-wrapper .form-control.active {border-color: #dc3545;}
 .write-wrapper .form-control.active:focus {box-shadow: 0 0 0 0.2rem rgb(255 50 0 / 25%);}
-.write-wrapper .loading-wrap {position: absolute; top: 0; left: 0; background-color: rgba(0, 0, 0, .5); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;}
+.write-wrapper .loading-wrap {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, .5); display: flex; justify-content: center; align-items: center;}
+
+
 
 /******************* 반응형 ******************/
 @media (max-width: 1399px) {
@@ -73,36 +76,29 @@ body >.gnb {min-height: calc(100vh - 131px);}
 
 @media (max-width: 1199px) {
 	.wrapper {margin: 1.5em 1em;}
-
-	.recent-wrapper .list-wrap .list-wp .list {width: 24%; margin-right: 1%;}
-	.recent-wrapper .list-wrap .list-wp .list:nth-child(5) {display: none;}
+	.recent-wrapper .list-wrap .list {width: 24%; margin-right: 1%;}
+	.recent-wrapper .list-wrap .list:nth-child(5) {display: none;}
 }
 
 @media (max-width: 991px) {
-	.recent-wrapper .list-wrap .list-wp {width: 102%;}
-	.recent-wrapper .list-wrap .list-wp .list {width: 31.3333%; margin-right: 2%;}
-	.recent-wrapper .list-wrap .list-wp .list:nth-child(4) {display: none;}
-
+	.recent-wrapper .list-wrap .list {width: 31.3333%; margin-right: 2%;}
+	.recent-wrapper .list-wrap .list:nth-child(4) {display: none;}
 	.list-wrapper .list-tbl th:nth-child(5) {display: none;}
 	.list-wrapper .list-tbl td:nth-child(5) {display: none;}
 }
 
 @media (max-width: 767px) {
 	.recent-wrapper {display: none;}
-
 	.list-wrapper .list-tbl th:nth-child(1) {width: 15%;}
 	.list-wrapper .list-tbl th:nth-child(3) {width: 25%;}
 	.list-wrapper .list-tbl th:nth-child(4) {display: none;}
 	.list-wrapper .list-tbl td:nth-child(4) {display: none;}
-
 	.write-wrapper .write-wrap {min-width: auto; width: 92%;}
-
 	.write-wrapper .write-tbl td.title {display: none;}
 }
 
 @media (max-width: 575px) {
 	.header-wrapper .navi-wrap .name {display: none;}
-
 	.list-wrapper .list-tbl th:nth-child(1) {width: 20%;}
 	.list-wrapper .list-tbl th:nth-child(3) {display: none;}
 	.list-wrapper .list-tbl td:nth-child(3) {display: none;}
