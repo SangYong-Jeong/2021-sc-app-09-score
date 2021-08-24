@@ -22,3 +22,9 @@
 ### saveAfter() 함수를 이용해 data를 push하고 난 뒤 list-page로 바로 이동하게 설계 -> 컴포넌트 분리 개념
 
 # 기능이 틀려지면 함수를 만드는게 좋다.
+
+## firebase의 경우 가져오려는 data를 직접적으로 하나 가져오는 경우 -> 데이터가 곧바로 오기 때문에 forEach 쓸 필요없이 바로 data.key, data.val()에 접근하면 된다.
+
+### 3교시 내용 중 key point -> firebase를 이용한 sorting 시 index기준 확인 잘 하기 || endAt, startAt에서 2개씩 데이터를 가져온뒤 현재 키값이면 if문 통과 못하게 조건을 짜서 prev, next 값 구해냈다
+
+# 현재 짜고 있는 방식은 절차지향 방식이다.
