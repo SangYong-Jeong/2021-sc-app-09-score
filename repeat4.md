@@ -34,3 +34,20 @@
 ## readcnt 늘리는 논리 -> 이미 readcnt를 갖고 있는 친구들을 view-wrapper로 가면 늘어나게 readcnt를 갖고있지않으면 1이 되게 로직을 짠다.
 ## readcnt는 list-wrapper로 돌아갈때 데이터들을 다시 불러오므로 view-wrapper가 아닌 list-wrapper에서 적용된다.
 ### 따라서 list-wrapper로 돌아갈때 데이터들을 다시 불러오는 작업을 해줘야한다.
+
+## 지금 수정부분 작업중
+
+## 오늘 복습 5교시 + 6교시 초반 없음
+
+## 항상 주의해야할 것이 null 값을 객체로 보고 속성에 접근하면 아예 error가 떠버린다. 이거는 주의해야한다.
+
+## bootstrap 덮어쓸 때에는 값들과 점수를 보면서 덮어써줘야 한다. 잘못 보면 못 덮을수도 있음
+
+# String의 method -> substr, substring
+## substr ->  substr(시작idx, 시작idx포함해서 retrun할 갯수) -> return 문자열
+## substring -> substring(시작idx, 끝idx) -> 시작idx부터 끝idx의 앞의 문자까지 -> return 문자열
+
+## 작업할때 함수 하나하나에 주석처리를 해 구분 짓는게 좋다. 
+##  HTML에 주는 EVENT는 이벤트인자를 받지 못한다. 왜냐하면 js 함수 불러오는것이기 때문
+
+### btSave를 이용해 작성, 수정 예정

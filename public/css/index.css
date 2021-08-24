@@ -5,7 +5,7 @@ body > .gnb {min-height: calc(100vh - 131px);}
 .title-wrap h2.title {font-size: 1.25em;}
 .material-icons {font-size: 1em; line-height: 1; user-select: none;}
 
-.btn-sm.delete {
+.btn-sm.file-delete {
 	padding: .125rem .25rem;
 	font-size: .75em;
 	line-height: 1;
@@ -67,7 +67,7 @@ body > .gnb {min-height: calc(100vh - 131px);}
 .footer-wrapper .link-wrap a:hover {text-decoration:none; color:khaki;}
 
 
-/********************** modal-wrapper *********************/
+/********************** write-wrapper *********************/
 .write-wrapper {position: fixed; left: 0; top: 0; width: 100%; height: 100vh; background-color: rgba(0, 0, 0, .8); display: flex; align-items: center; justify-content:center;}
 .write-wrapper .write-wrap {min-width: 700px; background-color: #fff; padding: 2em; border-radius: 6px; position: relative; overflow: hidden;}
 .write-wrapper .bt-close {background-color: #dc3545; color: #fff; width: 50px; height: 50px; font-size: 28px; display: flex; align-items: center; justify-content: center; position: absolute; top: 0; right: 0; cursor: pointer;}
@@ -86,6 +86,10 @@ body > .gnb {min-height: calc(100vh - 131px);}
 .write-wrapper .form-control.active:focus {box-shadow: 0 0 0 0.2rem rgb(255 50 0 / 25%);}
 .write-wrapper .loading-wrap {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, .5); display: flex; justify-content: center; align-items: center;}
 
+.write-wrapper .oldfile {display: flex; align-items: center; padding-bottom: .25em; margin-bottom: .5em;}
+.write-wrapper .oldfile > * {margin-right: .25em;}
+.write-wrapper .oldfile .thumb {width: 60px;}
+.write-wrapper .oldfile .thumb.video {width: 30px;}
 
 
 /******************* 반응형 ******************/
