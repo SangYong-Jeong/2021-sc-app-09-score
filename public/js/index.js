@@ -74,7 +74,7 @@ function viewShow (el) {
 	}
 }
 
-function goView(k, el) {
+function goView(k) {
 	// location.href = './view.html?key'+k;
 	viewShow('VIEW');
 	db
@@ -82,16 +82,23 @@ function goView(k, el) {
 		.get()
 		.then(onGetView)
 		.catch(onGetError);
-		var nextKey = null;
-		var prevKey = null;
-		if(el.tagName === 'TD') {
-			prevKey = $(el).parent().prev().data('key');
-			nextKey = $(el).parent().next().data('key');
-		}	
-		else {
-			prevKey = $(el).prev().data('key');
-			nextKey = $(el).next().data('key');
-		}
+}
+
+function setNavi(prev, next) {
+	if(prev) {
+			var html ='<div onclick="goView(\''+prev.key+'\');">'+prev.title+'</div>';
+			viewWrapper.querySelector('.prev-page .link').innerHTML = html;
+	}
+	else {
+		viewWrapper.querySelector('.prev-page .link').innerHTML = '이전글이 없습니다.';
+	}
+	if (next) {
+			var html ='<div onclick="goView(\''+next.key+'\');">'+next.title+'</div>';
+			viewWrapper.querySelector('.next-page .link').innerHTML = html;
+	}
+	else {
+		viewWrapper.querySelector('.next-page .link').innerHTML = '다음글이 없습니다.';
+	}
 }
 
 function listInit() { // 처음, 데이터를 생성
@@ -115,7 +122,7 @@ function setHTML(k, v) {
 	var n = tbody.querySelectorAll('tr').length + 1;
 	var html = '<tr data-idx="'+v.idx+'" data-key="'+k+'">';
 	html += '<td>'+n+'</td>';
-	html += '<td onclick="goView(\''+k+'\', this);">';
+	html += '<td onclick="goView(\''+k+'\');">';
 	if(v.upfile) {
 		html += '<img src="'+exts[allowType.indexOf(v.upfile.file.type)]+'" class="icon">';
 	}
@@ -162,18 +169,21 @@ function onGetView(r) {
 		}
 		viewWrapper.querySelector('.content-wrap').innerHTML += html;
 	}
-	ref.endBefore(r.val().idx).limitToLast(1).get().then(onGetPrev).catch(onGetError);
-	ref.startAfter(r.val().idx).limitToFirst(1).get().then(onGetNext).catch(onGetError);
-	function onGetPrev (r) {
-		r.forEach(function(v, i) {
-			console.log('prev', v.key);
+	// prev, next 만들기
+	var prev = null;
+	var next = null;
+	ref.startAt(r.val().idx).limitToFirst(2).get().then(function (r2) {
+		r2.forEach(function (v) {
+			if (v.key && r.key !== v.key) prev = {key: v.key, title:v.val().title};
 		});
-	}
-	function onGetNext (r) {
-		r.forEach(function(v, i) {
-			console.log('next', v.key);
+		setNavi(prev, next);
+	}).catch(onGetError);
+	ref.endAt(r.val().idx).limitToLast(2).get().then(function (r2) {
+		r2.forEach(function (v) {
+			if(v.key && r.key !== v.key) next = {key: v.key, title: v.val().title};
 		});
-	}
+		setNavi(prev, next);
+	}).catch(onGetError);
 }
 
 function onObserver(el, observer) {
@@ -199,7 +209,7 @@ function onGetRecent(r) {
 		r.forEach(function(v, i) {
 			var isImg = v.val().upfile && v.val().upfile.file.type !== allowType[3]; // upfile이 이미지인 경우
 			if(isImg) {
-				var html  = '<li class="list" data-key="'+v.key+'" data-id="'+v.val().idx+'" style="background-image: url(\''+v.val().upfile.path+'\');" onclick="goView(\''+v.key+'\', this);">';
+				var html  = '<li class="list" data-key="'+v.key+'" data-id="'+v.val().idx+'" style="background-image: url(\''+v.val().upfile.path+'\');" onclick="goView(\''+v.key+'\');">';
 				html += '<div class="ratio"></div>';
 				html += '</li>';
 				recent.innerHTML += html;

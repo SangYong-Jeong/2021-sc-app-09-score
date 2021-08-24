@@ -15,4 +15,10 @@
 ## 아직 안 배운 개념인데 html에서 다른 html로 query를 get방식으로 보내는 경우 query를 받는 html이 처리하지 못한다. 즉, client는 client가 보낸 query를 처리하지 못한다. (그래서 server가 필요하다. 프론트단에서 데이터 요청, 응답이 안된다고 보면 될듯) -> 우리가 보내는 query에 대한 응답을 받을려면 server로 보내야 한다.
 
 
-# 1교시 내용 : UI 부분 구현 -> html, css, 간단한 js 이용 
+# 1교시 내용 : UI 부분 구현 -> html, css, 간단한 js 이용 , viewShow() -> switch/case문을 통해 case별로 보여야할 page 설계
+
+# 2교시 내용: 간단한 UI단 JS 주기 -> 이전글, 다음글 기능 구현을 위해 KEY값을 찾는 로직 설계 (key값 이용하는 태그에 dataset['key']값을 다 던져준다)
+## firebase는 sort가 무조건 오름차순밖에 안되서 이용하기가 매우 까다롭다. (마음대로 data를 handling하는게 쉽지 않음)
+### saveAfter() 함수를 이용해 data를 push하고 난 뒤 list-page로 바로 이동하게 설계 -> 컴포넌트 분리 개념
+
+# 기능이 틀려지면 함수를 만드는게 좋다.
