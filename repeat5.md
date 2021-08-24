@@ -81,5 +81,9 @@ var allowType = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4']; -> upfile
 
 #### arr의 메서드 중 reverse(); -> 배열이 갖고있는 요소들의 순서를 거꾸로 만드는 메서드이다.
 
+# 동기, 비동기 개념은 es6들어가면서 명확하게 알 수 있을듯
+
 ## break문은 forEach메서드에서 사용할 수 없다!!
-# 반응형때문에 width가 변하므로 padding-top으로 16:9비율 유지하는 trick을 사용할 수 없다. 따라서 list안에 박스를 넣어 padding-top을 주면 width가 변해도 padding-top 역시 변하므로 같은 비율을 계속 유지해 줄 수 있다.
+# 반응형때문에 width가 변하므로 padding-top으로 16:9비율 유지하는 trick을 사용할 수 없다. 따라서 list안에 박스를 넣어 padding-top을 주면 width가 변해도 padding-top 역시 변하므로 같은 비율을 계속 유지해 줄 수 있다. // globalKey는 list-wrapper로 가면 null값으로 초기화 시켜주고 view-wrapper 들어갈때만 globalkey에 view-wrapper data의 키값을 넣어준다.
+
+## 항상 주의해야할 것이 null 값을 객체로 보고 속성에 접근하면 아예 error가 떠버린다. 이거는 주의해야한다.

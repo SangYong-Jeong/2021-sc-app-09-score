@@ -28,3 +28,5 @@
 ### 3교시 내용 중 key point -> firebase를 이용한 sorting 시 index기준 확인 잘 하기 || endAt, startAt에서 2개씩 데이터를 가져온뒤 현재 키값이면 if문 통과 못하게 조건을 짜서 prev, next 값 구해냈다
 
 # 현재 짜고 있는 방식은 절차지향 방식이다.
+
+## globalKey를 이용해서 -> login시 수정, 삭제 button이 뜨도록 handling
