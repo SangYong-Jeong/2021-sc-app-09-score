@@ -87,3 +87,5 @@ var allowType = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4']; -> upfile
 # 반응형때문에 width가 변하므로 padding-top으로 16:9비율 유지하는 trick을 사용할 수 없다. 따라서 list안에 박스를 넣어 padding-top을 주면 width가 변해도 padding-top 역시 변하므로 같은 비율을 계속 유지해 줄 수 있다. // globalKey는 list-wrapper로 가면 null값으로 초기화 시켜주고 view-wrapper 들어갈때만 globalkey에 view-wrapper data의 키값을 넣어준다.
 
 ## 항상 주의해야할 것이 null 값을 객체로 보고 속성에 접근하면 아예 error가 떠버린다. 이거는 주의해야한다.
+
+## bootstrap 덮어쓸 때에는 값들과 점수를 보면서 덮어써줘야 한다. 잘못 보면 못 덮을수도 있음

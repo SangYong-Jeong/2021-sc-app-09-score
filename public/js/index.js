@@ -44,6 +44,7 @@ var btClose = document.querySelector('.write-wrapper .bt-close');			// 글작성
 var btReset = document.querySelector('.write-wrapper .bt-reset');			// 글작성 모달창 리셋버튼
 var writeWrapper = document.querySelector('.write-wrapper');					// 글작성 모달창
 var writeForm = document.writeForm;																		// 글작성 form
+var writeTitle = writeWrapper.querySelector('h2.title');
 var loading = document.querySelector('.write-wrapper .loading-wrap');	// 파일 업로드 로딩바
 var tbody = document.querySelector('.list-tbl tbody');
 var recent = document.querySelector('.recent-wrapper .list-wp');
@@ -76,18 +77,14 @@ function viewShow (el) {
 		case 'LIST':
 			listWrapper.style.display = 'block';
 			viewWrapper.style.display = 'none';
-			updateWrapper.style.display = 'none';
 			globalKey = null;
+			listInit();
+			recent.innerHTML = '';
+			recentInit(ref);
 			break;
 		case 'VIEW':
 			listWrapper.style.display = 'none';
 			viewWrapper.style.display = 'block';
-			updateWrapper.style.display = 'none';
-			break;
-		case 'UPDATE':
-			listWrapper.style.display = 'none';
-			viewWrapper.style.display = 'none';
-			updateWrapper.style.display = 'block';
 			break;
 	}
 }
@@ -148,7 +145,7 @@ function setHTML(k, v) {
 	html += '</td>';
 	html += '<td>'+v.writer+'</td>';
 	html += '<td>'+moment(v.createAt).format('YYYY-MM-DD')+'</td>';
-	html += '<td>0</td>'; // 조회수 수정 필요
+	html += '<td>'+(v.readcnt || 0)+'</td>'; // 조회수 수정 필요
 	html += '</tr>';
 	tbody.innerHTML += html;
 	tr = tbody.querySelectorAll('tr');
@@ -165,7 +162,15 @@ function sortTr() {
 
 /************** event callback ************/
 function onUpdate (e) {
-	
+	db.child(this.dataset['key']).once('value', function(v) {
+		if (user && v.val().user === user.uid) {
+			onWrite(e, e.target.dataset['key']);
+		}
+		else {
+			alert('권한이 없습니다.');
+			viewShow('LIST');
+		}
+	});
 }
 
 function onDelete (e) {
@@ -174,9 +179,6 @@ function onDelete (e) {
 			if (user && v.val().user === user.uid) {
 				db.child(e.target.dataset['key']).remove();
 				viewShow('LIST');
-				listInit();
-				recent.innerHTML = '';
-				recentInit(ref);
 			}
 			else {
 				alert('권한이 없습니다.');
@@ -188,6 +190,8 @@ function onDelete (e) {
 
 function onGetView(r) {
 	globalKey = r.val().user;
+	viewButton(true);
+
 	console.log('my', r.key, r.val());
 	viewWrapper.querySelector('.title-wrap .content').innerHTML = r.val().title;
 	viewWrapper.querySelector('.writer-wrap .content').innerHTML = r.val().writer;
@@ -196,7 +200,6 @@ function onGetView(r) {
 	viewWrapper.querySelector('.content-wrap').innerHTML = r.val().content || '';
 	btUpdate.dataset['key'] = r.key;
 	btDelete.dataset['key'] = r.key;
-	viewButton(true);
 	if(r.val().upfile) {
 		var html = '';
 		if (allowType.indexOf(r.val().upfile.file.type) === 3) {
@@ -228,6 +231,11 @@ function onGetView(r) {
 		});
 		setNavi(prev, next);
 	}).catch(onGetError);
+
+	// readcnt update
+	db.child(r.key).update({
+		readcnt: r.val().readcnt ? r.val().readcnt + 1 : 1
+	})
 }
 
 function onObserver(el, observer) {
@@ -298,10 +306,24 @@ function onLogout() {	// btLogout이 클릭되면
 	auth.signOut();
 }
 
-function onWrite() { // 모달창이 오픈되면
+function onWrite(e, key) { // 모달창이 오픈되면 // 이벤트 콜백함수는 첫번째 인자로 이벤트 인자를 받는다.
 	loading.style.display = 'none';
 	$(writeWrapper).stop().fadeIn(300);
+	writeForm.key.value = '';
+	writeTitle.innerHTML = '게시글 작성';
+	btSave.innerHTML = '글쓰기';
 	writeForm.title.focus();
+	if(key) { // update 처리
+		db.child(key).once('value', onGetUpdate);
+	}
+	function onGetUpdate(r) {
+		writeForm.key.value = key;
+		writeForm.title.value = r.val().title;
+		writeForm.writer.value = r.val().writer;
+		writeForm.content.value = r.val().content;
+		writeTitle.innerHTML = '게시글 수정';
+		btSave.innerHTML = '수정하기';
+	}
 }
 
 function onClose() { // 모달창이 닫히면
@@ -410,9 +432,7 @@ function onWriteSubmit(e) { // btSave클릭시(글 저장시), validation 검증
 	function saveAfter() {
 		db.push(data).key; // firebase저장
 		onClose();
-		listInit();
-		recent.innerHTML = '';
-		recentInit(ref);
+		
 		viewShow('LIST');
 	}
 }

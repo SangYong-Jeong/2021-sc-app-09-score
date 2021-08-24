@@ -30,3 +30,7 @@
 # 현재 짜고 있는 방식은 절차지향 방식이다.
 
 ## globalKey를 이용해서 -> login시 수정, 삭제 button이 뜨도록 handling
+
+## readcnt 늘리는 논리 -> 이미 readcnt를 갖고 있는 친구들을 view-wrapper로 가면 늘어나게 readcnt를 갖고있지않으면 1이 되게 로직을 짠다.
+## readcnt는 list-wrapper로 돌아갈때 데이터들을 다시 불러오므로 view-wrapper가 아닌 list-wrapper에서 적용된다.
+### 따라서 list-wrapper로 돌아갈때 데이터들을 다시 불러오는 작업을 해줘야한다.
