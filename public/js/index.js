@@ -37,6 +37,7 @@ var btSave = document.querySelector('.write-wrapper .bt-save');				// 글작성 
 var btLogin = document.querySelector('.header-wrapper .bt-login');		// 로긴 버튼
 var btLogout = document.querySelector('.header-wrapper .bt-logout');	// 로그아웃 버튼
 var btWrite = document.querySelector('.list-wrapper .bt-write');			// 글작성 모달창 오픈버튼
+var btWrite2 = document.querySelector('.view-wrapper .bt-write');			// 글작성 모달창 오픈버튼
 var btClose = document.querySelector('.write-wrapper .bt-close');			// 글작성 모달창 클로즈버튼
 var btReset = document.querySelector('.write-wrapper .bt-reset');			// 글작성 모달창 리셋버튼
 var writeWrapper = document.querySelector('.write-wrapper');					// 글작성 모달창
@@ -73,7 +74,7 @@ function viewShow (el) {
 	}
 }
 
-function goView(k) {
+function goView(k, el) {
 	// location.href = './view.html?key'+k;
 	viewShow('VIEW');
 	db
@@ -81,6 +82,16 @@ function goView(k) {
 		.get()
 		.then(onGetView)
 		.catch(onGetError);
+		var nextKey = null;
+		var prevKey = null;
+		if(el.tagName === 'TD') {
+			prevKey = $(el).parent().prev().data('key');
+			nextKey = $(el).parent().next().data('key');
+		}	
+		else {
+			prevKey = $(el).prev().data('key');
+			nextKey = $(el).next().data('key');
+		}
 }
 
 function listInit() { // 처음, 데이터를 생성
@@ -104,7 +115,7 @@ function setHTML(k, v) {
 	var n = tbody.querySelectorAll('tr').length + 1;
 	var html = '<tr data-idx="'+v.idx+'" data-key="'+k+'">';
 	html += '<td>'+n+'</td>';
-	html += '<td onclick="goView(\''+k+'\');">';
+	html += '<td onclick="goView(\''+k+'\', this);">';
 	if(v.upfile) {
 		html += '<img src="'+exts[allowType.indexOf(v.upfile.file.type)]+'" class="icon">';
 	}
@@ -129,12 +140,40 @@ function sortTr() {
 
 /************** event callback ************/
 function onGetView(r) {
-	console.log(r.key, r.val());
+	console.log('my', r.key, r.val());
 	viewWrapper.querySelector('.title-wrap .content').innerHTML = r.val().title;
 	viewWrapper.querySelector('.writer-wrap .content').innerHTML = r.val().writer;
 	viewWrapper.querySelector('.datetime-wrap .content').innerHTML = moment(r.val().createAt).format('YYYY-MM-DD HH:mm:ss');
 	viewWrapper.querySelector('.readnum-wrap .content').innerHTML = r.val().readcnt || 0;
 	viewWrapper.querySelector('.content-wrap').innerHTML = r.val().content || '';
+	if(r.val().upfile) {
+		var html = '';
+		if (allowType.indexOf(r.val().upfile.file.type) === 3) {
+			html  = '<div class="my-3 text-center">';
+			html += '<video autoplay muted loop controls class="mw-100">';
+			html += '<source src="'+r.val().upfile.path+'"></source>';
+			html += '</video>';
+			html += '</div>';
+		}
+		else {
+			html  = '<div class="my-3 text-center">';
+			html += '<img src="'+r.val().upfile.path+'" class="mw-100">';
+			html += '</img>';
+		}
+		viewWrapper.querySelector('.content-wrap').innerHTML += html;
+	}
+	ref.endBefore(r.val().idx).limitToLast(1).get().then(onGetPrev).catch(onGetError);
+	ref.startAfter(r.val().idx).limitToFirst(1).get().then(onGetNext).catch(onGetError);
+	function onGetPrev (r) {
+		r.forEach(function(v, i) {
+			console.log('prev', v.key);
+		});
+	}
+	function onGetNext (r) {
+		r.forEach(function(v, i) {
+			console.log('next', v.key);
+		});
+	}
 }
 
 function onObserver(el, observer) {
@@ -160,7 +199,7 @@ function onGetRecent(r) {
 		r.forEach(function(v, i) {
 			var isImg = v.val().upfile && v.val().upfile.file.type !== allowType[3]; // upfile이 이미지인 경우
 			if(isImg) {
-				var html  = '<li class="list" data-id="'+v.val().idx+'" style="background-image: url(\''+v.val().upfile.path+'\');" onclick="goView(\''+v.key+'\');">';
+				var html  = '<li class="list" data-key="'+v.key+'" data-id="'+v.val().idx+'" style="background-image: url(\''+v.val().upfile.path+'\');" onclick="goView(\''+v.key+'\', this);">';
 				html += '<div class="ratio"></div>';
 				html += '</li>';
 				recent.innerHTML += html;
@@ -185,11 +224,13 @@ function onAuthChanged(r) { // login, logout 상태가 변하면...
 		btLogin.style.display = 'none';
 		btLogout.style.display = 'block';
 		btWrite.style.display = 'inline-block';
+		btWrite2.style.display = 'inline-block';
 	}
 	else {	// 로그아웃 되면 UI가 할일
 		btLogin.style.display = 'block';
 		btLogout.style.display = 'none';
 		btWrite.style.display = 'none';
+		btWrite2.style.display = 'none';
 	}
 }
 
@@ -279,11 +320,7 @@ function onWriteSubmit(e) { // btSave클릭시(글 저장시), validation 검증
 			data.upfile = { folder: 'root/board/'+savename.folder, name: savename.file, file: file };
 		}
 		else {
-			db.push(data).key; // firebase저장
-			onClose();
-			listInit();
-			recent.innerHTML = '';
-			recentInit(ref);
+			saveAfter();
 		}
 	}
 
@@ -307,16 +344,20 @@ function onWriteSubmit(e) { // btSave클릭시(글 저장시), validation 검증
 
 	function onSuccess(r) { // r: 실제 웹으로 접근 가능한 경로
 		data.upfile.path = r;
-		db.push(data).key; // firebase저장
-		onClose();
-		listInit();
-		recent.innerHTML = '';
-		recentInit(ref);
+		saveAfter();
 	}
 
 	function onError(err) {
 		alert('파일 가져오기에 실패하였습니다. 다시 시도해 주세요.');
 		console.log(err);
+	}
+	function saveAfter() {
+		db.push(data).key; // firebase저장
+		onClose();
+		listInit();
+		recent.innerHTML = '';
+		recentInit(ref);
+		viewShow('LIST');
 	}
 }
 
@@ -368,6 +409,7 @@ auth.onAuthStateChanged(onAuthChanged);
 btLogin.addEventListener('click', onLogin);
 btLogout.addEventListener('click', onLogout);
 btWrite.addEventListener('click', onWrite);
+btWrite2.addEventListener('click', onWrite);
 btClose.addEventListener('click', onClose);
 btReset.addEventListener('click', onWriteReset);
 writeForm.addEventListener('submit', onWriteSubmit);
