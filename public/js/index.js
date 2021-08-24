@@ -207,6 +207,10 @@ function onDelete(e) {
 					db.child(key).remove();
 					viewShow('LIST');
 				});
+				else {
+					db.child(key).remove();
+					viewShow('LIST');
+				}
 			}
 			else {
 				alert('권한이 없습니다.');
